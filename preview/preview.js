@@ -192,6 +192,21 @@ function optionSelect(field, groupKey, value) {
   </select>`;
 }
 
+function icon(name) {
+  const attrs = `class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"`;
+  const icons = {
+    theme: `<svg ${attrs}><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.5 6.5 0 0 0 9.8 9.8Z"/></svg>`,
+    export: `<svg ${attrs}><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 19h14"/></svg>`,
+    calendar: `<svg ${attrs}><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M3 10h18"/><path d="M8 14h2"/><path d="M12 14h2"/><path d="M8 18h2"/><path d="M12 18h2"/></svg>`,
+    reset: `<svg ${attrs}><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v6h6"/></svg>`,
+    settings: `<svg ${attrs}><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1A2 2 0 1 1 4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7A2 2 0 1 1 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3.1V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1A2 2 0 1 1 19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1a2 2 0 1 1 0 4H21a1.7 1.7 0 0 0-1.6 1Z"/></svg>`,
+    add: `<svg ${attrs}><path d="M12 5v14"/><path d="M5 12h14"/></svg>`,
+    search: `<svg ${attrs}><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></svg>`,
+    table: `<svg ${attrs}><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M9 4v16"/></svg>`
+  };
+  return icons[name] || "";
+}
+
 function render() {
   const list = filteredSchedules();
   document.body.classList.toggle("dark", localStorage.getItem("hmrg:dark") === "true");
@@ -204,28 +219,28 @@ function render() {
           <h1>Clinical Research Scheduler</h1>
         </div>
         <div class="actions">
-          <button class="btn" data-action="theme">Theme</button>
-          <button class="btn" data-action="export">Export CSV</button>
-          <button class="btn" data-action="template">Week Template</button>
-          <button class="btn" data-action="reset">Reset</button>
-          <button class="btn" data-action="settings">Settings</button>
-          <button class="btn primary" data-action="add">Add Visit</button>
+          <button class="btn" data-action="theme">${icon("theme")}Theme</button>
+          <button class="btn" data-action="export">${icon("export")}Export CSV</button>
+          <button class="btn" data-action="template">${icon("calendar")}Week Template</button>
+          <button class="btn" data-action="reset">${icon("reset")}Reset</button>
+          <button class="btn" data-action="settings">${icon("settings")}Settings</button>
+          <button class="btn primary" data-action="add">${icon("add")}Add Visit</button>
         </div>
       </section>
       <div class="error ${error ? "visible" : ""}">${escapeHtml(error)} <button class="btn" data-action="clear-error">Dismiss</button></div>
       <section class="filters">
-        <input class="field" placeholder="Search patient, room, study, coordinator" value="${escapeAttr(searchText)}" data-search-input="true" />
+        <label class="search-field">${icon("search")}<input class="field" placeholder="Search patient, room, study, coordinator" value="${escapeAttr(searchText)}" data-search-input="true" /></label>
         ${select("rooms", filters.room, "Room")}
         ${select("studies", filters.study, "Study")}
         ${select("coordinators", filters.coordinator, "Coordinator")}
         <input class="field" type="date" value="${filters.startDate}" data-filter="startDate" />
         <input class="field" type="date" value="${filters.endDate}" data-filter="endDate" />
-        <button class="btn primary" data-action="focus-search">Search</button>
+        <button class="btn primary" data-action="focus-search">${icon("search")}Search</button>
       </section>
       <section class="viewbar">
         <div class="tabs">
-          <button class="btn ${view === "calendar" ? "active" : ""}" data-view="calendar">Calendar</button>
-          <button class="btn ${view === "table" ? "active" : ""}" data-view="table">Scheduled Visits</button>
+          <button class="btn ${view === "calendar" ? "active" : ""}" data-view="calendar">${icon("calendar")}Calendar</button>
+          <button class="btn ${view === "table" ? "active" : ""}" data-view="table">${icon("table")}Scheduled Visits</button>
         </div>
         <p>${list.length} schedule records</p>
       </section>
@@ -465,12 +480,13 @@ document.addEventListener("drop", (event) => {
   const schedule = schedules.find((item) => item.id === id);
   if (!schedule) return;
   const candidate = { ...schedule, date: drop.dataset.dropDate };
-  const validation = validate(candidate, id);
+    const validation = validate(candidate, id);
   if (validation) {
     error = validation;
     if (validation === "Room already booked for this time range") conflictAlert(candidate, id);
     else conflictNotice = validation;
-  } else {
+  }
+  else {
     schedules = schedules.map((item) => (item.id === id ? candidate : item));
     write(SCHEDULE_KEY, schedules);
   }
@@ -514,7 +530,8 @@ document.addEventListener("click", (event) => {
       error = validation;
       if (validation === "Room already booked for this time range") conflictAlert(inlineDraft, inlineId);
       else conflictNotice = validation;
-    } else {
+    }
+    else {
       schedules = schedules.map((item) => (item.id === inlineId ? inlineDraft : item));
       write(SCHEDULE_KEY, schedules);
       inlineId = "";
