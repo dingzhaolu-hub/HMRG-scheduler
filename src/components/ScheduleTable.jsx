@@ -33,7 +33,7 @@ export default function ScheduleTable({ schedules, onEdit, sortConfig, onSort })
                 <th key={field.key} className="px-3 py-3 font-semibold">
                   <button className="inline-flex items-center gap-1 hover:text-clinic-teal" onClick={() => onSort(field.key)}>
                     {field.label}
-                    <span>{sortConfig?.key === field.key ? (sortConfig.direction === "asc" ? "↑" : "↓") : "↕"}</span>
+                    <span>{sortConfig?.key === field.key ? (sortConfig.direction === "asc" ? "ASC" : "DESC") : "SORT"}</span>
                   </button>
                 </th>
               ))}
