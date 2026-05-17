@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: #f6faf9;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex h-10 items-center justify-center gap-2 rounded-md border border-clinic-line bg-white px-3 text-sm font-medium text-slate-700 transition hover:border-clinic-teal hover:text-clinic-teal disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200;
+  }
+
+  .btn-primary {
+    @apply border-clinic-teal bg-clinic-teal text-white hover:border-clinic-teal hover:bg-teal-700 hover:text-white dark:border-teal-500 dark:bg-teal-600;
+  }
+
+  .btn-danger {
+    @apply border-rose-200 text-rose-700 hover:border-rose-500 hover:text-rose-700 dark:border-rose-900 dark:text-rose-300;
+  }
+
+  .field {
+    @apply h-10 w-full rounded-md border border-clinic-line bg-white px-3 text-sm text-slate-800 outline-none transition focus:border-clinic-teal focus:ring-2 focus:ring-teal-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:ring-teal-950;
+  }
+
+  .label {
+    @apply text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400;
+  }
+
+  .panel {
+    @apply rounded-lg border border-clinic-line bg-white shadow-panel dark:border-slate-800 dark:bg-slate-900;
+  }
+}
