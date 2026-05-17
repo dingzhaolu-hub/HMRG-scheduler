@@ -26,14 +26,6 @@ export default function CalendarView({ schedules, weekStart, setWeekStart, onEdi
     editSchedule(id, { date: formatDateInput(date) });
   };
 
-  const addAtSlot = (date, hour) => {
-    onAdd({
-      date: formatDateInput(date),
-      startTime: `${String(hour).padStart(2, "0")}:00`,
-      endTime: `${String(hour + 1).padStart(2, "0")}:00`
-    });
-  };
-
   const slotKey = (date, hour) => `${date}-${hour}`;
 
   const toggleSlot = (date, hour) => {
@@ -41,6 +33,26 @@ export default function CalendarView({ schedules, weekStart, setWeekStart, onEdi
     setSelectedSlots((current) =>
       current.includes(key) ? current.filter((item) => item !== key) : [...current, key]
     );
+  };
+
+  const selectedRangeForDate = (date, clickedHour) => {
+    const selectedHours = selectedSlots
+      .map((key) => {
+        const separator = key.lastIndexOf("-");
+        const slotDate = key.slice(0, separator);
+        const slotHour = Number(key.slice(separator + 1));
+        return slotDate === date ? slotHour : null;
+      })
+      .filter((hour) => Number.isFinite(hour));
+
+    const hours = selectedHours.includes(clickedHour) ? selectedHours : [clickedHour];
+    const start = Math.min(...hours);
+    const end = Math.max(...hours) + 1;
+
+    return {
+      startTime: `${String(start).padStart(2, "0")}:00`,
+      endTime: `${String(end).padStart(2, "0")}:00`
+    };
   };
 
   return (
@@ -109,7 +121,10 @@ export default function CalendarView({ schedules, weekStart, setWeekStart, onEdi
                       event.preventDefault();
                       const key = slotKey(dateValue, index + 7);
                       setSelectedSlots((current) => (current.includes(key) ? current : [...current, key]));
-                      addAtSlot(day, index + 7);
+                      onAdd({
+                        date: dateValue,
+                        ...selectedRangeForDate(dateValue, index + 7)
+                      });
                     }}
                     aria-label={`Add visit ${formatDay(day)} at ${String(index + 7).padStart(2, "0")}:00`}
                   />
