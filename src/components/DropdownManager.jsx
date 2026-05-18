@@ -41,10 +41,10 @@ export default function DropdownManager({ group }) {
   };
 
   return (
-    <section className="rounded-lg border border-clinic-line bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-900">
+    <section className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-800 dark:bg-slate-900">
       <div className="mb-3 flex items-center justify-between gap-3">
         <div>
-          <h3 className="font-semibold text-clinic-ink dark:text-white">{group.label}</h3>
+          <h3 className="font-bold text-[#13213a] dark:text-white">{group.label}</h3>
           <p className="text-xs text-slate-500 dark:text-slate-400">{values.length} options</p>
         </div>
       </div>
@@ -63,7 +63,7 @@ export default function DropdownManager({ group }) {
 
       <div className="space-y-2">
         {values.map((value) => (
-          <div key={value} className="flex items-center gap-2 rounded-md border border-clinic-line bg-white p-2 dark:border-slate-800 dark:bg-slate-950">
+          <div key={value} className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white p-2 dark:border-slate-800 dark:bg-slate-950">
             {editing === value ? (
               <input className="field h-9" value={draft} onChange={(event) => setDraft(event.target.value)} autoFocus />
             ) : (
@@ -93,7 +93,7 @@ export default function DropdownManager({ group }) {
         ))}
 
         {!values.length ? (
-          <p className="rounded-md border border-dashed border-clinic-line px-3 py-4 text-center text-sm text-slate-500 dark:border-slate-800 dark:text-slate-400">
+          <p className="rounded-xl border border-dashed border-slate-200 px-3 py-4 text-center text-sm text-slate-500 dark:border-slate-800 dark:text-slate-400">
             No options yet.
           </p>
         ) : null}
