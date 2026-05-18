@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title desc">
+  <title id="title">Hamilton Medical Research Group logo mark</title>
+  <desc id="desc">Stylized HMRG lettermark with grey and navy research arcs.</desc>
+  <rect width="1200" height="900" fill="none"/>
+  <path d="M365 655C300 518 326 360 432 248c124-132 330-166 492-80 76 40 135 101 172 174-64-94-169-153-286-153-103 0-205 42-281 116-91 88-139 211-121 330l-37 20z" fill="#8b8d89"/>
+  <path d="M630 670c-82-139-69-301 36-418 112-124 294-156 447-77 88 46 145 121 162 212-53-70-137-110-237-110-116 0-228 55-303 149-62 77-98 171-105 244z" fill="#223b82"/>
+  <text x="28" y="835" font-family="Georgia, 'Times New Roman', serif" font-size="285" font-weight="700" letter-spacing="4" fill="#8b8d89">HM</text>
+  <text x="650" y="835" font-family="Georgia, 'Times New Roman', serif" font-size="285" font-weight="700" letter-spacing="4" fill="#223b82">RG</text>
+</svg>
