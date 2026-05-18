@@ -11,6 +11,6 @@ await mkdir(dist, { recursive: true });
 await cp(resolve(preview, "index.html"), resolve(dist, "index.html"));
 await cp(resolve(preview, "preview.css"), resolve(dist, "preview.css"));
 await cp(resolve(preview, "preview.js"), resolve(dist, "preview.js"));
-await cp(resolve(preview, "brand-logo-mark.png"), resolve(dist, "brand-logo-mark.png"));
+await cp(resolve(root, "public", "brand-logo-mark.svg"), resolve(dist, "brand-logo-mark.svg"));
 
 console.log("Built preview app to dist");
