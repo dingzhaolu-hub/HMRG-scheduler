@@ -114,8 +114,11 @@ const withOptionDefaults = (schedule, options) => ({
 
 const normalizeOptions = (options) =>
   Object.fromEntries(
-    Object.entries(options).map(([key, values]) => [
-      key,
-      Array.from(new Set(values.map((value) => value.trim()).filter(Boolean)))
-    ])
+    Object.entries(options).map(([key, values]) => {
+      const cleaned = Array.from(new Set(values.map((value) => value.trim()).filter(Boolean)));
+      return [key, key === "rooms" ? sortRooms(cleaned) : cleaned];
+    })
   );
+
+const roomNumber = (room) => Number(String(room).match(/\d+/)?.[0] || 999);
+const sortRooms = (rooms) => [...rooms].sort((a, b) => roomNumber(a) - roomNumber(b) || a.localeCompare(b));
