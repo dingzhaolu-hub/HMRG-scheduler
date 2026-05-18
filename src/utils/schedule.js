@@ -1,4 +1,5 @@
 export const optionGroups = [
+  { key: "rooms", label: "Rooms", singular: "Room", scheduleField: "room" },
   { key: "studies", label: "Studies", singular: "Study", scheduleField: "study" },
   { key: "coordinators", label: "Coordinators", singular: "Coordinator", scheduleField: "coordinator" }
 ];
