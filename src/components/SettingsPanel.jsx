@@ -6,12 +6,12 @@ export default function SettingsPanel({ open, onClose }) {
   if (!open) return null;
 
   return (
-    <aside className="fixed inset-0 z-30 flex justify-end bg-slate-950/35">
-      <div className="flex h-full w-full max-w-xl flex-col border-l border-clinic-line bg-white shadow-panel dark:border-slate-800 dark:bg-slate-950">
-        <div className="flex items-center justify-between border-b border-clinic-line p-5 dark:border-slate-800">
+    <aside className="fixed inset-0 z-30 flex justify-end bg-slate-950/40 backdrop-blur-sm">
+      <div className="flex h-full w-full max-w-xl flex-col border-l border-slate-200 bg-white shadow-2xl dark:border-slate-800 dark:bg-slate-950">
+        <div className="flex items-center justify-between border-b border-slate-200 p-6 dark:border-slate-800">
           <div>
-            <h2 className="text-lg font-semibold text-clinic-ink dark:text-white">Settings</h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400">Manage editable dropdown values used across the scheduler.</p>
+            <h2 className="text-2xl font-bold tracking-[-0.03em] text-[#13213a] dark:text-white">Settings</h2>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Manage editable dropdown values used across the scheduler.</p>
           </div>
           <button className="btn h-9 w-9 px-0" onClick={onClose} aria-label="Close settings">
             <X size={18} />
