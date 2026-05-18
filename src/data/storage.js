@@ -1,56 +1,20 @@
 const SCHEDULE_KEY = "hmrg:schedules";
 const OPTIONS_KEY = "hmrg:options";
+const MANUAL_ONLY_RESET_KEY = "hmrg:manual-only-reset-v1";
 
 export const defaultOptions = {
-  rooms: ["Room 4", "Room 5", "Room 6", "Room 7"],
+  rooms: ["Room 6", "Room 7"],
   studies: ["ROXIATLAS", "WC45725", "NN7910 REDEFINE"],
-  coordinators: ["Joe", "Analysis", "Stephanie", "Shiela"],
-  status: ["Booked", "Pending", "Done"]
+  coordinators: ["Joe", "Ana", "Stephanie", "Shiela"]
 };
 
-const today = new Date();
-const toDateInput = (date) => date.toISOString().slice(0, 10);
-const addDays = (days) => {
-  const next = new Date(today);
-  next.setDate(today.getDate() + days);
-  return toDateInput(next);
-};
+export const starterSchedules = [];
 
-export const starterSchedules = [
-  {
-    id: crypto.randomUUID(),
-    date: addDays(0),
-    startTime: "09:00",
-    endTime: "10:15",
-    room: "Room 4",
-    study: "ROXIATLAS",
-    patientId: "HMRG-1042",
-    coordinator: "Joe",
-    status: "Booked"
-  },
-  {
-    id: crypto.randomUUID(),
-    date: addDays(1),
-    startTime: "11:30",
-    endTime: "12:30",
-    room: "Room 5",
-    study: "WC45725",
-    patientId: "HMRG-2088",
-    coordinator: "Stephanie",
-    status: "Pending"
-  },
-  {
-    id: crypto.randomUUID(),
-    date: addDays(2),
-    startTime: "14:00",
-    endTime: "15:00",
-    room: "Room 6",
-    study: "NN7910 REDEFINE",
-    patientId: "HMRG-3171",
-    coordinator: "Shiela",
-    status: "Done"
-  }
-];
+const ensureManualOnlyReset = () => {
+  if (localStorage.getItem(MANUAL_ONLY_RESET_KEY) === "true") return;
+  writeJson(SCHEDULE_KEY, []);
+  localStorage.setItem(MANUAL_ONLY_RESET_KEY, "true");
+};
 
 const readJson = (key, fallback) => {
   try {
@@ -66,7 +30,20 @@ const writeJson = (key, value) => {
   return value;
 };
 
-export const getSchedules = () => readJson(SCHEDULE_KEY, starterSchedules);
+const normalizeSavedNames = (value) => {
+  if (Array.isArray(value)) return value.map(normalizeSavedNames);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, normalizeSavedNames(item)]));
+  }
+  return value === "Analysis" ? "Ana" : value;
+};
+
+export const getSchedules = () => {
+  ensureManualOnlyReset();
+  const schedules = normalizeSavedNames(readJson(SCHEDULE_KEY, starterSchedules));
+  writeJson(SCHEDULE_KEY, schedules);
+  return schedules;
+};
 
 export const addSchedule = (schedule) => {
   const schedules = getSchedules();
@@ -91,12 +68,10 @@ export const deleteSchedule = (id) => {
 
 export const setSchedules = (schedules) => writeJson(SCHEDULE_KEY, schedules);
 
-export const getOptions = () => readJson(OPTIONS_KEY, defaultOptions);
+export const getOptions = () => {
+  const options = normalizeSavedNames(readJson(OPTIONS_KEY, defaultOptions));
+  writeJson(OPTIONS_KEY, options);
+  return options;
+};
 
 export const updateOptions = (options) => writeJson(OPTIONS_KEY, options);
-
-export const resetSchedulerData = () => {
-  writeJson(SCHEDULE_KEY, starterSchedules);
-  writeJson(OPTIONS_KEY, defaultOptions);
-  return { schedules: starterSchedules, options: defaultOptions };
-};
