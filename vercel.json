@@ -1,5 +1,5 @@
 {
-  "buildCommand": "node scripts/build-preview.mjs",
+  "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "rewrites": [
     {
