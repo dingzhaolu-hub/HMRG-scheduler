@@ -4,12 +4,11 @@ import {
   deleteSchedule as persistDeleteSchedule,
   getOptions,
   getSchedules,
-  resetSchedulerData,
   setSchedules as persistSchedules,
   updateOptions as persistOptions,
   updateSchedule as persistUpdateSchedule
 } from "../data/storage.js";
-import { conflictAlertMessage, emptySchedule, optionGroups, validateSchedule } from "../utils/schedule.js";
+import { conflictAlertMessage, optionGroups, validateSchedule } from "../utils/schedule.js";
 
 const ScheduleContext = createContext(null);
 
@@ -81,43 +80,6 @@ export const ScheduleProvider = ({ children }) => {
     }
   };
 
-  const generateWeekTemplate = (weekStart) => {
-    const rooms = options.rooms.length ? options.rooms : [emptySchedule.room];
-    const studies = options.studies.length ? options.studies : [emptySchedule.study];
-    const coordinators = options.coordinators.length ? options.coordinators : [emptySchedule.coordinator];
-    const generated = [];
-    const start = new Date(weekStart);
-
-    for (let day = 0; day < 5; day += 1) {
-      const date = new Date(start);
-      date.setDate(start.getDate() + day);
-      generated.push({
-        ...emptySchedule,
-        id: crypto.randomUUID(),
-        date: date.toISOString().slice(0, 10),
-        startTime: "08:30",
-        endTime: "09:00",
-        room: rooms[day % rooms.length],
-        study: studies[day % studies.length],
-        coordinator: coordinators[day % coordinators.length],
-        patientId: "",
-        status: "Pending"
-      });
-    }
-
-    const merged = [...schedules, ...generated.filter((item) => !validateSchedule(item, schedules))];
-    persistSchedules(merged);
-    setSchedules(merged);
-  };
-
-  const resetData = () => {
-    const reset = resetSchedulerData();
-    setSchedules(reset.schedules);
-    setOptions(reset.options);
-    setError("");
-    setConflictNotice("");
-  };
-
   const value = useMemo(
     () => ({
       schedules,
@@ -129,9 +91,7 @@ export const ScheduleProvider = ({ children }) => {
       createSchedule,
       editSchedule,
       removeSchedule,
-      replaceOptions,
-      generateWeekTemplate,
-      resetData
+      replaceOptions
     }),
     [schedules, options, error, conflictNotice]
   );
@@ -149,8 +109,7 @@ const withOptionDefaults = (schedule, options) => ({
   ...schedule,
   room: schedule.room || options.rooms[0] || "",
   study: schedule.study || options.studies[0] || "",
-  coordinator: schedule.coordinator || options.coordinators[0] || "",
-  status: schedule.status || options.status[0] || "Pending"
+  coordinator: schedule.coordinator || options.coordinators[0] || ""
 });
 
 const normalizeOptions = (options) =>
