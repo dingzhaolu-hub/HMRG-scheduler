@@ -1,19 +1,16 @@
 export const optionGroups = [
-  { key: "rooms", label: "Rooms", singular: "Room", scheduleField: "room" },
   { key: "studies", label: "Studies", singular: "Study", scheduleField: "study" },
-  { key: "coordinators", label: "Coordinators", singular: "Coordinator", scheduleField: "coordinator" },
-  { key: "status", label: "Status", singular: "Status", scheduleField: "status" }
+  { key: "coordinators", label: "Coordinators", singular: "Coordinator", scheduleField: "coordinator" }
 ];
 
 export const scheduleFields = [
-  { key: "date", label: "Date", type: "date" },
-  { key: "startTime", label: "Start", type: "time" },
-  { key: "endTime", label: "End", type: "time" },
   { key: "room", label: "Room", optionKey: "rooms" },
+  { key: "date", label: "Date", type: "date" },
+  { key: "startTime", label: "Start Time", type: "time" },
+  { key: "endTime", label: "End Time", type: "time" },
   { key: "study", label: "Study", optionKey: "studies" },
   { key: "patientId", label: "Patient ID", type: "text" },
-  { key: "coordinator", label: "Coordinator", optionKey: "coordinators" },
-  { key: "status", label: "Status", optionKey: "status" }
+  { key: "coordinator", label: "Study Coordinator", optionKey: "coordinators" }
 ];
 
 export const emptySchedule = {
@@ -23,14 +20,24 @@ export const emptySchedule = {
   room: "",
   study: "",
   patientId: "",
-  coordinator: "",
-  status: "Pending"
+  coordinator: ""
 };
 
 export const timeToMinutes = (value) => {
   const [hours, minutes] = value.split(":").map(Number);
   return hours * 60 + minutes;
 };
+
+export const isTemporaryRoomBlock = (room, date) => {
+  const roomNumber = Number(String(room).match(/\d+/)?.[0] || 0);
+  if (roomNumber < 1 || roomNumber > 5 || !date) return false;
+  if (date > "2026-07-31") return false;
+  const day = new Date(`${date}T00:00:00`).getDay();
+  return day === 2 || day === 4;
+};
+
+export const temporaryRoomBlockMessage = (room) =>
+  `${room} is temporarily unavailable on Tuesdays and Thursdays through July 31, 2026. Booking opens again starting August 1, 2026.`;
 
 export const hasRoomConflict = (candidate, schedules, ignoreId = null) => {
   if (!candidate.date || !candidate.room || !candidate.startTime || !candidate.endTime) return false;
@@ -50,6 +57,7 @@ export const hasRoomConflict = (candidate, schedules, ignoreId = null) => {
 export const getAvailableRoomsForSlot = (candidate, schedules, rooms, ignoreId = null) =>
   rooms.filter(
     (room) =>
+      !isTemporaryRoomBlock(room, candidate.date) &&
       !hasRoomConflict(
         {
           ...candidate,
@@ -68,8 +76,7 @@ export const validateSchedule = (schedule, schedules, ignoreId = null) => {
     ["room", "Room"],
     ["study", "Study"],
     ["patientId", "Patient ID"],
-    ["coordinator", "Coordinator"],
-    ["status", "Status"]
+    ["coordinator", "Coordinator"]
   ];
   const missing = requiredFields.filter(([key]) => !String(schedule[key] || "").trim()).map(([, label]) => label);
   if (missing.length) {
@@ -77,6 +84,9 @@ export const validateSchedule = (schedule, schedules, ignoreId = null) => {
   }
   if (timeToMinutes(schedule.endTime) <= timeToMinutes(schedule.startTime)) {
     return "End time must be after start time";
+  }
+  if (isTemporaryRoomBlock(schedule.room, schedule.date)) {
+    return temporaryRoomBlockMessage(schedule.room);
   }
   if (hasRoomConflict(schedule, schedules, ignoreId)) {
     return "Room already booked for this time range";
@@ -116,18 +126,11 @@ export const formatDateInput = (date) => date.toISOString().slice(0, 10);
 export const formatDay = (date) =>
   new Intl.DateTimeFormat("en", { weekday: "short", month: "short", day: "numeric" }).format(date);
 
-export const statusClasses = {
-  Booked: "border-clinic-blue bg-blue-50 text-blue-800 dark:border-blue-500 dark:bg-blue-950 dark:text-blue-100",
-  Pending: "border-clinic-amber bg-amber-50 text-amber-800 dark:border-amber-500 dark:bg-amber-950 dark:text-amber-100",
-  Done: "border-clinic-green bg-green-50 text-green-800 dark:border-green-500 dark:bg-green-950 dark:text-green-100"
-};
-
 export const colorForSchedule = (schedule) =>
-  statusClasses[schedule.status] ||
   "border-clinic-teal bg-teal-50 text-teal-900 dark:border-teal-500 dark:bg-teal-950 dark:text-teal-100";
 
 export const exportSchedulesToCsv = (schedules) => {
-  const headers = ["Date", "Start Time", "End Time", "Room", "Study", "Patient ID", "Coordinator", "Status"];
+  const headers = ["Date", "Start Time", "End Time", "Room", "Study", "Patient ID", "Coordinator"];
   const rows = schedules.map((schedule) => [
     schedule.date,
     schedule.startTime,
@@ -135,8 +138,7 @@ export const exportSchedulesToCsv = (schedules) => {
     schedule.room,
     schedule.study,
     schedule.patientId,
-    schedule.coordinator,
-    schedule.status
+    schedule.coordinator
   ]);
   const csv = [headers, ...rows]
     .map((row) => row.map((cell) => `"${String(cell ?? "").replaceAll('"', '""')}"`).join(","))
