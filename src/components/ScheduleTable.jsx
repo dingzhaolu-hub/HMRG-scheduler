@@ -1,4 +1,4 @@
-import { Check, Pencil, Trash2, X } from "lucide-react";
+import { ArrowUpDown, Check, Pencil, Trash2, X } from "lucide-react";
 import { useState } from "react";
 import { useSchedules } from "../context/ScheduleContext.jsx";
 import { scheduleFields } from "../utils/schedule.js";
@@ -26,33 +26,34 @@ export default function ScheduleTable({ schedules, onEdit, sortConfig, onSort })
   return (
     <section className="panel overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-clinic-line text-left text-sm dark:divide-slate-800">
-          <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500 dark:bg-slate-900 dark:text-slate-400">
+        <table className="min-w-full divide-y divide-slate-200 text-left text-sm dark:divide-slate-800">
+          <thead className="bg-slate-50/80 text-xs uppercase tracking-wide text-slate-500 dark:bg-slate-900 dark:text-slate-400">
             <tr>
               {scheduleFields.map((field) => (
                 <th key={field.key} className="px-3 py-3 font-semibold">
-                  <button className="inline-flex items-center gap-1 hover:text-clinic-teal" onClick={() => onSort(field.key)}>
-                    {field.label}
-                    <span>{sortConfig?.key === field.key ? (sortConfig.direction === "asc" ? "ASC" : "DESC") : "SORT"}</span>
+                  <button className="inline-flex items-center gap-2 hover:text-clinic-teal" onClick={() => onSort(field.key)}>
+                    <span>{field.label}</span>
+                    <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-1 text-[10px] dark:border-slate-700 dark:bg-slate-950">
+                      <ArrowUpDown size={12} />
+                      {sortConfig?.key === field.key ? (sortConfig.direction === "asc" ? "ASC" : "DESC") : ""}
+                    </span>
                   </button>
                 </th>
               ))}
               <th className="w-28 px-3 py-3 font-semibold">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-clinic-line bg-white dark:divide-slate-800 dark:bg-slate-900">
+          <tbody className="divide-y divide-slate-200 bg-white dark:divide-slate-800 dark:bg-slate-900">
             {schedules.map((schedule) => {
               const isEditing = editingId === schedule.id;
               return (
-                <tr key={schedule.id} className="align-top hover:bg-slate-50 dark:hover:bg-slate-800/70">
+                <tr key={schedule.id} className="align-top transition hover:bg-teal-50/50 dark:hover:bg-slate-800/70">
                   {scheduleFields.map((field) => (
                     <td key={field.key} className="min-w-36 px-3 py-3">
                       {isEditing ? (
                         <EditableCell field={field} value={draft[field.key]} options={options} onChange={updateDraft} />
                       ) : (
-                        <span className={field.key === "status" ? "inline-flex rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold dark:bg-slate-800" : ""}>
-                          {schedule[field.key] || "-"}
-                        </span>
+                        <span>{schedule[field.key] || "-"}</span>
                       )}
                     </td>
                   ))}
