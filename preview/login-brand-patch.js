@@ -1,8 +1,13 @@
 (function () {
   const logoPath = "/brand-logo-mark.png?v=hmrg-logo-2026";
+  const fallbackLogoPath = "/brand-logo-mark.svg?v=hmrg-logo-2026";
 
   const patchLoginBrand = () => {
     document.querySelectorAll(".login-brand-logo, .logo-mark").forEach((image) => {
+      image.onerror = () => {
+        image.onerror = null;
+        image.src = fallbackLogoPath;
+      };
       image.src = logoPath;
     });
 
