@@ -13,6 +13,5 @@ await cp(resolve(preview, "preview.css"), resolve(dist, "preview.css"));
 await cp(resolve(preview, "preview.js"), resolve(dist, "preview.js"));
 await cp(resolve(preview, "contact-admin-patch.js"), resolve(dist, "contact-admin-patch.js"));
 await cp(resolve(root, "public", "brand-logo-mark.svg"), resolve(dist, "brand-logo-mark.svg"));
-await cp(resolve(root, "public", "brand-logo-mark.png"), resolve(dist, "brand-logo-mark.png"));
 
 console.log("Built preview app to dist");
